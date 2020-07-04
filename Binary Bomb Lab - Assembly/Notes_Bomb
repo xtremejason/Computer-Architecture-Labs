@@ -1,0 +1,47 @@
+(strings bomb)
+Phase 1:
+The future will be better tomorrow.
+//Doing x/s on 0x402350 will return the string / answer to phase1
+Eax register contains user input
+
+Phase 2:
+// i r command shows registers
+(fibonacci sequence)
+0 1 1 2 3 5    
+
+Phase 3:
+1 754? CORRECT!
+
+Phase 4:
+8 1
+
+(use "disas") (p/x - x/s0x603c40 holds user input)
+0x117 -> 279
+
+Phase 4:
+"x/s 0x4025e3  -  %d %d  (format of answer)
+first value: 2
+
+phase 5: %d %d format
+first value is 2
+
+5 115
+
+phase 6:
+x/3x $rsi
+x/3x *($rsi +8)
+
+
+second value : ""   (line +39)(codes for blank space)
+line 65 : not equal to 1
+2nd value : 1?
+
+
+
+
+(JBE -> less than or equal)
+
+
+272/016
+
+
